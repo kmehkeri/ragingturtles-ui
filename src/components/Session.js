@@ -5,46 +5,60 @@ class Session extends Component {
     super(props);
     this.state = {
       formUsername: '',
-      loggedInUsername: null
+      formPassword: '',
+      loginError: null
     };
   }
 
-  handleChange = (event) => {
+  handleUsernameChange = (event) => {
     this.setState({ formUsername: event.target.value });
   }
 
+  handlePasswordChange = (event) => {
+    this.setState({ formPassword: event.target.value });
+  }
+
   handleLogIn = (event) => {
-    var data = { username: this.state.formUsername, password: this.state.formUsername };
+    var data = { username: this.state.formUsername, password: this.state.formPassword };
     var headers = { 'Accept': 'application/json, text/plain, */*', 'Content-Type': 'application/json' };
     fetch("/session", { method: "POST", headers: headers, credentials: "include", body: JSON.stringify(data) })
       .then(response => {
-        this.setState({ loggedInUsername: this.state.formUsername });
         this.props.switchUserHandler(this.state.formUsername);
+        this.setState({ formUsername: '', formPassword: '' });
       })
-      .catch(error => alert("Error logging in." + error));
+      .catch(error => this.setState({ formUsername: '', formPassword: '', loginError: 'Error logging in!' }));
     event.preventDefault();
   }
 
   handleLogOut = (event) => {
     fetch("/session", { method: "DELETE", credentials: "include" })
       .then(response => {
-        this.setState({ formUsername: '', loggedInUsername: null });
+        this.props.switchUserHandler(null);
+        this.setState({ formUsername: '', formPassword: '' });
       })
-      .catch(error => this.setState({ formUsername: '', loggedInUsername: null }));
+      .catch(error => this.setState({ formUsername: '', formPassword: '', loginError: 'Error logging out!' }));
     event.preventDefault();
   }
 
   render() {
+    const loginSection = (
+      <form onSubmit={this.handleLogIn}>
+        <label id="session-username-label">Username:</label>
+        <input id="session-username-input" type="text" value={this.state.formUsername} onChange={this.handleUsernameChange} />
+        <label id="session-password-label">Password:</label>
+        <input id="session-password-input" type="text" value={this.state.formPassword} onChange={this.handlePasswordChange} />
+        <input id="session-signin-button" type="submit" value="Log in" />
+      </form>
+    );
+    const logoutSection = (
+      <div>
+        <p id="session-username-label">{this.props.loggedInUsername}</p>
+        <button id="session-signout-button" onClick={this.handleLogOut.bind(this)}>Log out</button>
+      </div>
+    );
     return (
       <div className="Session">
-        <form onSubmit={this.handleLogIn}>
-          <label id="Session-username-prompt">Username:</label>
-          <input id="Session-username-text" type="text" value={this.state.formUsername} onChange={this.handleChange} />
-          <input id="Session-signin-button" type="submit" value="Log in" />
-        </form>
-
-        <p id="Session-username-label">{this.state.loggedInUsername}</p>
-        <button id="Session-signout-button" onClick={this.handleLogOut.bind(this)}>Log out</button>
+        {this.props.loggedInUsername ? logoutSection : loginSection}
       </div>
     );
   }
@@ -52,8 +66,8 @@ class Session extends Component {
   componentDidMount() {
     fetch("/session", { credentials: "same-origin" })
       .then(response => response.json())
-      .then(data => this.setState({ loggedInUsername: data.username }))
-      .catch(error => this.setState({ loggedInUsername: null }));
+      .then(data => this.props.switchUserHandler(data.username))
+      .catch(error => this.props.switchUserHandler(null));
   }
 }
 

@@ -22,8 +22,8 @@ class App extends Component {
           <img src={logo} className="App-logo" alt="logo" />
           <h1 className="App-title">Raging Turtles</h1>
         </header>
-        <Session switchUserHandler={this.switchUser} />
-        {/* Game list */}
+        <Session loggedInUsername={this.state.loggedInUsername} switchUserHandler={this.switchUser} />
+        {/*<GameList />*/}
         {/* Game */}
       </div>
     );
