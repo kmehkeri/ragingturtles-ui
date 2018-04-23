@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
-import logo from '../logo.svg';
-import './App.css';
+import Header from './Header.js';
 import Session from './Session.js';
+import './App.css';
 
 class App extends Component {
   constructor(props) {
@@ -17,14 +17,9 @@ class App extends Component {
 
   render() {
     return (
-      <div className="App">
-        <header className="App-header">
-          <img src={logo} className="App-logo" alt="logo" />
-          <h1 className="App-title">Raging Turtles</h1>
-        </header>
+      <div id="app">
+        <Header />
         <Session loggedInUsername={this.state.loggedInUsername} switchUserHandler={this.switchUser} />
-        {/*<GameList />*/}
-        {/* Game */}
       </div>
     );
   }
