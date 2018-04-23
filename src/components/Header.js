@@ -1,14 +1,18 @@
 import React, { Component } from 'react';
-import logo from '../logo.svg';
-import './Header.css';
+import AppBar from 'material-ui/AppBar';
+import Toolbar from 'material-ui/Toolbar';
+import Typography from 'material-ui/Typography';
 
 class Header extends Component {
   render() {
     return (
-      <header className="header">
-        <img src={logo} className="logo" alt="logo" />
-        <h1 className="title">Raging Turtles</h1>
-      </header>
+      <AppBar position="static">
+        <Toolbar>
+          <Typography variant="title" color="inherit">
+            Raging Turtles
+          </Typography>
+        </Toolbar>
+      </AppBar>
     );
   }
 }
